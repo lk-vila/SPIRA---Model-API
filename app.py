@@ -6,7 +6,7 @@ from flask.json import jsonify
 app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
-def predict():
+def predict(): # PLACEHOLDER
     result = ""
     prob = random()
 
