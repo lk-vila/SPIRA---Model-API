@@ -12,7 +12,7 @@ class Dataset(Dataset):
     """
     Class for load a train and test from dataset generate by import_librispeech.py and others
     """
-    def __init__(self, c, ap, train=True, max_seq_len=None, test=False):
+    def __init__(self, c, ap, mode, max_seq_len=None):
         # set random seed
         random.seed(c['seed'])
         torch.manual_seed(c['seed'])
@@ -22,15 +22,30 @@ class Dataset(Dataset):
         # torch.backends.cudnn.benchmark = False
         self.c = c
         self.ap = ap
-        self.train = train
-        self.test = test
+        self.mode = mode
+        self.train = False
+        self.eval = False
+        self.test = False
+        
 
-        if test:
+        if mode == "train":
+            self.train = True
+            self.dataset_csv = c.dataset['train_csv']
+            self.dataset_root = c.dataset['train_data_root_path']
+
+        elif mode == "eval":
+            self.eval = True
+            self.dataset_csv = c.dataset['eval_csv']
+            self.dataset_root = c.dataset['eval_data_root_path']
+
+        elif mode == "test":
+            self.test = True
             self.dataset_csv = c.dataset['test_csv']
             self.dataset_root = c.dataset['test_data_root_path']
         else:
-            self.dataset_csv = c.dataset['train_csv'] if train else c.dataset['eval_csv']
-            self.dataset_root = c.dataset['train_data_root_path'] if train else c.dataset['eval_data_root_path']
+            self.dataset_csv = c.dataset['inf_csv']
+            self.dataset_root = c.dataset['inf_data_root_path']
+             
 
         if c.data_aumentation['insert_noise']:
             self.noise_csv = c.dataset['noise_csv'] 
@@ -171,7 +186,7 @@ class Dataset(Dataset):
         return len(self.dataset_list)
 
 def train_dataloader(c, ap):
-    return DataLoader(dataset=Dataset(c, ap, train=True),
+    return DataLoader(dataset=Dataset(c, ap, mode="train"),
                           batch_size=c.train_config['batch_size'],
                           shuffle=True,
                           num_workers=c.train_config['num_workers'],
@@ -181,13 +196,18 @@ def train_dataloader(c, ap):
                           sampler=None)
 
 def eval_dataloader(c, ap, max_seq_len=None):
-    return DataLoader(dataset=Dataset(c, ap, train=False, max_seq_len=max_seq_len),
+    return DataLoader(dataset=Dataset(c, ap, mode="eval", max_seq_len=max_seq_len),
                           collate_fn=own_collate_fn, batch_size=c.test_config['batch_size'], 
                           shuffle=False, num_workers=c.test_config['num_workers'])
 
 
 def test_dataloader(c, ap, max_seq_len=None):
-    return DataLoader(dataset=Dataset(c, ap, train=False, test=True, max_seq_len=max_seq_len),
+    return DataLoader(dataset=Dataset(c, ap, mode="test", max_seq_len=max_seq_len),
+                          collate_fn=teste_collate_fn, batch_size=c.test_config['batch_size'], 
+                          shuffle=False, num_workers=c.test_config['num_workers'])
+
+def inf_dataloader(c, ap, max_seq_len=None):
+    return DataLoader(dataset=Dataset(c, ap, mode="inference", max_seq_len=max_seq_len),
                           collate_fn=teste_collate_fn, batch_size=c.test_config['batch_size'], 
                           shuffle=False, num_workers=c.test_config['num_workers'])
 
