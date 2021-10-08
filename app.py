@@ -36,28 +36,39 @@ def predict():
     dataloader = inf_dataloader(config, audio_processor, max_seq_len=max_seq_len)
     with torch.inference_mode():
         for feature, target, slices, targets_org in dataloader:
-            output = model(feature)         
-            prob = np.average(output)
-            result = ""
-            
-            if(prob > 0.55):
-                result = "Insuficiência respiratória"
-            elif(prob > 0.45 and prob < 0.55):
-                result = "Inconclusivo"
-            else:
-                result = "Saudável"
-    
-        return jsonify({'resultado': result, 'probabilidade': f"{prob}"})
+            # unpack overlapping for calculation loss and accuracy 
+            output = model(feature).float()
 
+            if slices is not None and targets_org is not None:
+                idx = 0
+                new_output = []
+                new_target = []
+                for i in range(slices.size(0)):
+                    num_samples = int(slices[i].cpu().numpy())
+
+                    samples_output = output[idx:idx+num_samples]
+                    output_mean = samples_output.mean()
+                    samples_target = target[idx:idx+num_samples]
+                    target_mean = samples_target.mean()
+
+                    new_target.append(target_mean)
+                    new_output.append(output_mean)
+                    idx += num_samples
+
+                target = torch.stack(new_target, dim=0)
+                output = torch.stack(new_output, dim=0)
+            
+            result = torch.round(output)
+    
+        return jsonify({'resultado': f"{int(result[0])}"})
 
 if __name__=="__main__":
     config = load_config("config.json")
     audio_processor = AudioProcessor(**config.audio)
-    max_seq_len = config.dataset['max_seq_len'] 
-
+    max_seq_len = config.dataset['max_seq_len']
     model = SpiraConvV2(config, audio_processor)
     model.load_state_dict(torch.load(os.path.abspath("./resources/checkpoints/spira-checkpoints/spiraconv_v2/best_checkpoint.pt"), map_location=torch.device('cpu')), strict=False)
-    #model.zero_grad()
+    model.zero_grad()
     model.eval()
 
     app.run()

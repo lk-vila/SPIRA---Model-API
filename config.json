@@ -6,7 +6,7 @@
         "window_len": 4,
         "step": 1,
         "padding_with_max_lenght": false,
-        "max_seq_len": null,
+        "max_seq_len": 401,
         "eval_csv": "../SPIRA_Dataset_V2/metadata_eval.csv",
         "eval_data_root_path": "../SPIRA_Dataset_V2/",
         "test_csv": "../SPIRA_Dataset_V2/metadata_test.csv",
@@ -18,21 +18,25 @@
         "control_class": 0,
         "patient_class": 1
     },
+
     "model": {
         "fc1_dim": 100,
         "fc2_dim": 1
     },
+
     "data_aumentation": {
         "insert_noise": true,
-        "num_noise_control": 2,
-        "num_noise_patient": 2,
+        "num_noise_control": 4,
+        "num_noise_patient": 3,
         "noise_max_amp": 0.19233719,
         "noise_min_amp": 0.033474047
     },
+    
     "test_config": {
         "batch_size": 1,
-        "num_workers": 8 //Changed due to system limitations. Rollback for deploy 
+        "num_workers": 8 //Changed due to system limitations. Rollback for deploy
     },
+
     "audio": {
         "feature": "mfcc",
         "sample_rate": 16000,
