@@ -71,4 +71,4 @@ if __name__=="__main__":
     model.zero_grad()
     model.eval()
 
-    app.run()
+    app.run(host='0.0.0.0')
