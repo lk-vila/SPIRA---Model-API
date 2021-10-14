@@ -58,8 +58,9 @@ def predict():
                 target = torch.stack(new_target, dim=0)
                 output = torch.stack(new_output, dim=0)
 
-        prob = output[0].item()
+        os.remove(f"./resources/audio/{nome}.wav")
 
+        prob = output[0].item()
         if prob > 0.55:
             result = "Insuficiência respiratória"
         elif (prob >= 0.45 and prob <= 0.55 ):
