@@ -6,5 +6,5 @@ tensorboardX
 pandas
 PyYAML
 sklearn
-torchaudio
+torchaudio==0.9.1
 flask
