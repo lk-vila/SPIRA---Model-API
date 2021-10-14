@@ -57,17 +57,26 @@ def predict():
 
                 target = torch.stack(new_target, dim=0)
                 output = torch.stack(new_output, dim=0)
-            
-            result = torch.round(output)
-    
-        return jsonify({'resultado': f"{int(result[0])}"})
+
+        prob = output[0].item()
+
+        if prob > 0.55:
+            result = "Insuficiência respiratória"
+        elif (prob >= 0.45 and prob <= 0.55 ):
+            result = "Inconclusivo"
+        else:
+            result = "Saudável"
+
+        return jsonify({'resultado': f"{result}", 'probabilidade calculada': f"{round(prob, 3)}"})
+
 
 if __name__=="__main__":
     config = load_config("config.json")
     audio_processor = AudioProcessor(**config.audio)
     max_seq_len = config.dataset['max_seq_len']
     model = SpiraConvV2(config, audio_processor)
-    model.load_state_dict(torch.load(os.path.abspath("./resources/checkpoints/spira-checkpoints/spiraconv_v2/best_checkpoint.pt"), map_location=torch.device('cpu')), strict=False)
+    model.load_state_dict(torch.load(os.path.abspath(
+        "./resources/checkpoints/spira-checkpoints/spiraconv_v2/best_checkpoint.pt"), map_location='cpu')['model'], strict=True)
     model.zero_grad()
     model.eval()
 

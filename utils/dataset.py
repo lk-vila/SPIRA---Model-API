@@ -43,6 +43,7 @@ class Dataset(Dataset):
             self.dataset_csv = c.dataset['test_csv']
             self.dataset_root = c.dataset['test_data_root_path']
         else:
+            self.test = True
             self.dataset_csv = c.dataset['inf_csv']
             self.dataset_root = c.dataset['inf_data_root_path']
              
@@ -64,7 +65,7 @@ class Dataset(Dataset):
         self.dataset_list = pd.read_csv(self.dataset_csv, sep=',').values
         
         # get max seq lenght for padding 
-        if self.c.dataset['padding_with_max_lenght'] and train and not self.c.dataset['max_seq_len'] and not self.c.dataset['split_wav_using_overlapping']:
+        if self.c.dataset['padding_with_max_lenght'] and self.train and not self.c.dataset['max_seq_len'] and not self.c.dataset['split_wav_using_overlapping']:
             self.max_seq_len = 0
             min_seq = float('inf')
             for idx in range(len(self.dataset_list)):
