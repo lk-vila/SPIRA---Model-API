@@ -1,6 +1,6 @@
 FROM python:3
 
-WORKDIR /usr/src/spira-app
+WORKDIR /usr/src/spira-api
 
 COPY . .
 
@@ -10,4 +10,4 @@ EXPOSE 5000
 
 ENTRYPOINT [ "python" ]
 
-CMD [ "app.py" ]
+CMD [ "api.py" ]
