@@ -18,6 +18,15 @@ from datetime import datetime
 import csv
 
 
+config = load_config("config/spira.json")
+audio_processor = AudioProcessor(**config.audio)
+max_seq_len = config.dataset['max_seq_len']
+model = SpiraConvV2(config, audio_processor)
+model.load_state_dict(torch.load(os.path.abspath(
+    "./resources/checkpoints/spira-checkpoints/spiraconv_v2/best_checkpoint.pt"), map_location='cpu')['model'], strict=True)
+model.zero_grad()
+model.eval()
+
 app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
@@ -69,16 +78,3 @@ def predict():
             result = "Saudável"
 
         return jsonify({'resultado': f"{result}", 'probabilidade calculada': f"{round(prob, 3)}"})
-
-
-if __name__=="__main__":
-    config = load_config("config.json")
-    audio_processor = AudioProcessor(**config.audio)
-    max_seq_len = config.dataset['max_seq_len']
-    model = SpiraConvV2(config, audio_processor)
-    model.load_state_dict(torch.load(os.path.abspath(
-        "./resources/checkpoints/spira-checkpoints/spiraconv_v2/best_checkpoint.pt"), map_location='cpu')['model'], strict=True)
-    model.zero_grad()
-    model.eval()
-
-    app.run(host='0.0.0.0', port=(os.getenv("PORT") or 5000))
