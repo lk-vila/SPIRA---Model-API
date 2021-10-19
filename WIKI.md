@@ -7,16 +7,18 @@ O nosso grupo da matéria LabXP de 2021 está encarregado de construir a API res
 
 <br>
 
-## <b>Tabela de Conteudo</b>
+## <b>Tabela de Conteúdo</b>
 ---
- - [Grupo](#grupo)
+ - [Grupo](#<b>grupo</b>)
  - [Ferramentas](#ferramentas)
  - [Desenvolvimento](#desenvolvimento)
     - [Preparação e decisões iniciais](#preparação-e-decisões-iniciais)
+    - [Construção da API](#construção-da-api)
+ - [Futuros Passos](#futuros-passos)
 
 <br>
 
-## <b>Grupo</b>
+## Grupo
 ---
 
 - <b>João Vitor Soares</b>
@@ -28,7 +30,7 @@ O nosso grupo da matéria LabXP de 2021 está encarregado de construir a API res
 
 <br>
 
-## <b>Ferramentas</b>
+## Ferramentas
 ---
 
  - [Python](https://www.python.org/)
@@ -38,7 +40,7 @@ O nosso grupo da matéria LabXP de 2021 está encarregado de construir a API res
 
 <br>
 
-## <b>Desenvolvimento</b>
+## Desenvolvimento
 ---
 ## Preparação e decisões iniciais
 &nbsp;&nbsp;&nbsp;&nbsp;Para iniciarmos o projeto tivemos que estudar a [pesquisa](https://aclanthology.org/2021.findings-acl.55.pdf) em que o SPIRA se baseia para compreender a lógica por trás do modelo com que estamos trabalhando e sobre como é feita a coleta de dados. 
@@ -48,14 +50,27 @@ O nosso grupo da matéria LabXP de 2021 está encarregado de construir a API res
 &nbsp;&nbsp;&nbsp;&nbsp;Houve a necessidade de pesquisar sobre as ferramentas visto que nenhum dos membros da equipe tiveram contato prévio com elas.
 
 ##  Construção da API
-&nbsp;&nbsp;&nbsp;&nbsp;Foi necessário compreender o funcionamento do código do modelo para que pudéssemos produzir uma inferência sobre os resultados obtidos, no entanto isso se mostrou um desafio muito maior do que esperado, devido à nossa falta de experiência trabalhando com modelos e a complexidade ímpar do código, causando diversas dúvidas sobre as configurações que deveriam ser usadas e como utilizar algumas funções do PyTorch.
+&nbsp;&nbsp;&nbsp;&nbsp;Foi necessário compreender o funcionamento do código do modelo para que pudéssemos produzir uma inferência sobre os resultados obtidos, no entanto isso se mostrou um desafio muito maior do que esperado, devido à nossa falta de experiência trabalhando com modelos e a complexidade ímpar do código diversas dúvidas sobre as configurações que deveriam ser usadas e como utilizar algumas funções do PyTorch foram surgindo.
+
+&nbsp;&nbsp;&nbsp;&nbsp;Após algumas semanas de desenvolvimento, conseguimos encapsular o modelo para que ele recebesse o áudio e realizasse as devidas predições. As primeiras inferências foram feitas com um modelo rudimentar treinado por nós mesmos. Logo após, um dos desenvolvedores do modelo, Edresson Casanova, nos forneceu um arquivo com as configurações da versão mais recente do modelo, esse que utilizamos de fato para realizar as inferências definitivas com o encapsulamento que havíamos criado.
+
+&nbsp;&nbsp;&nbsp;&nbsp;Mesmo com o novo arquivo de configuração, os testes de inferência realizados eram em sua grande maioria inconclusivos, o que era um indicativo de que haviam partes do procedimento de inferência que precisavam ser corrigidas. Com o auxílio de um dos pesquisadores do modelo, Daniel Peixoto, encontramos os seguintes erros na primeira versão do encapsulamento:
+
+- Strict = false: Ignora camadas que não são iguais ao modelo que estamos utilizando para classificar a entrada, levando o Pytorch à ignorar qualquer erro que acontecesse.
+
+- Test = false: No teste era inserido um ruido diferente sobre o áudio, então é preciso que ele seja true para que o ruido adequado fosse implementado.
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;Após a correção dos erros encontrados, observamos que as inferências se tornaram condizentes com os resultados esperados.
+
+ &nbsp;&nbsp;&nbsp;&nbsp;Uma vez que o encapsulamento do modelo foi corrigido, utilizamos a biblioteca Flask para construir uma API funcional que recebe o arquivo de áudio em formato ".wav" a ser analisado e retorna como resposta uma análise dizendo se o usuário possui ou não insuficiência respiratória.
+
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-
-## <b>Futuros Passos</b>
+## Futuros Passos
 ---
 
 - Dockerizar a aplicação
+- Deploy da aplicação no Heroku
 - Implementação do armazenamento de resultados no banco de dados
-- Ajustes na inferência do modelo
-- 
+- Ajustes na inferência do modelo - Feito
