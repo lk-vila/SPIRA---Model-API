@@ -1,18 +1,13 @@
+from flask.sessions import NullSession
 import torch
-import random
 import os
-import torch.nn as nn
-import pandas as pd
-import numpy as np
 
 from flask import Flask, request
-from torch import stack
+
 from flask.json import jsonify
-from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import Dataset, DataLoader
-from utils.generic_utils import load_config,Mish
+from utils.generic_utils import load_config
 from utils.audio_processor import AudioProcessor 
-from utils.dataset import Dataset, inf_dataloader, test_dataloader
+from utils.dataset import inf_dataloader, test_dataloader
 from models.spiraconv import SpiraConvV2
 from datetime import datetime
 import csv
@@ -69,12 +64,10 @@ def predict():
 
         os.remove(f"./resources/audio/{nome}.wav")
 
-        prob = output[0].item()
-        if prob > 0.55:
-            result = "Insuficiência respiratória"
-        elif (prob >= 0.45 and prob <= 0.55 ):
-            result = "Inconclusivo"
-        else:
-            result = "Saudável"
 
-        return jsonify({'resultado': f"{result}", 'probabilidade calculada': f"{round(prob, 3)}"})
+        result = output[0].item()
+
+        return jsonify({'resultado': f"{round(result, 3)}"})
+
+if __name__ == '__main__':
+    app.run()

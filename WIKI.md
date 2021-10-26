@@ -1,4 +1,12 @@
 <h1 align="center">SPIRA LABXP - WIKI</h1>
+
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/887108943963369513/900115923795578880/68913925.png" alt="Tree" width="125" height="125">
+</p>
+<p align="center">
+  <i>Projeto do LabXP em parceria com o SPIRA.</i>
+</p>
+
 <br>
 
 &nbsp;&nbsp;&nbsp;&nbsp;O [SPIRA](https://spira.ime.usp.br/coleta/) (Sistema de detecção precoce de insuficiência respiratória por meio de análise de áudio) é um projeto focado em criar um método de triagem baseado em áudio e inteligência artificial para a detecção de insuficiência respitória.

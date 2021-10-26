@@ -8,8 +8,8 @@ RUN chmod +x scripts/*
 
 RUN bash scripts/get_resources.sh
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
 EXPOSE 5000
 
-ENTRYPOINT [ "gunicorn", "--config", "config/gunicorn.py", "api:app" ]
+ENTRYPOINT [ "uwsgi", "config/uwsgi.ini" ]

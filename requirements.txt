@@ -8,4 +8,4 @@ PyYAML
 sklearn
 torchaudio
 flask
-gunicorn
+uWSGI
