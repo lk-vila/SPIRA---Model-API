@@ -1,7 +1,4 @@
 import torchaudio
-
-from torchaudio.transforms import Spectrogram
-from torchaudio.transforms import MelSpectrogram
 from torchaudio.transforms import MFCC
 from torchaudio.transforms import Resample
 

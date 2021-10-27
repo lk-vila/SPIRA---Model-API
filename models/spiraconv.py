@@ -3,7 +3,6 @@ SpiraConv models
 """
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from utils.generic_utils import Mish
 
 class SpiraConvV2(nn.Module):

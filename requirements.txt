@@ -1,11 +1,7 @@
-tqdm
+-f https://download.pytorch.org/whl/cpu/torch_stable.html
+torch==1.10.0+cpu
+torchaudio==0.10.0+cpu 
 numpy
-matplotlib
-Pillow
-tensorboardX
 pandas
-PyYAML
-sklearn
-torchaudio
 flask
 waitress
