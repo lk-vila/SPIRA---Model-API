@@ -3,7 +3,7 @@ import torch
 import os
 
 from flask import Flask, request
-
+from waitress import serve
 from flask.json import jsonify
 from utils.generic_utils import load_config
 from utils.audio_processor import AudioProcessor 
@@ -70,4 +70,4 @@ def predict():
         return jsonify({'resultado': f"{round(result, 3)}"})
 
 if __name__ == '__main__':
-    app.run()
+    serve(app, host='0.0.0.0', port=(os.getenv("PORT") or 5000))

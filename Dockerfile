@@ -12,4 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
-ENTRYPOINT [ "uwsgi", "uwsgi.ini" ]
+ENTRYPOINT [ "python" ]
+
+CMD [ "api.py" ]
