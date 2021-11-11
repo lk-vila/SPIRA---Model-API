@@ -1,6 +1,7 @@
 from flask.sessions import NullSession
 import torch
 import os
+import logging
 
 from flask import Flask, request
 from waitress import serve
@@ -12,6 +13,8 @@ from models.spiraconv import SpiraConvV2
 from datetime import datetime
 import csv
 
+logger = logging.getLogger("waitress")
+logger.setLevel(logging.INFO)
 
 config = load_config("config/spira.json")
 audio_processor = AudioProcessor(**config.audio)
@@ -25,12 +28,14 @@ model.eval()
 app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
-def predict():
+def predict():    
     nome = datetime.now()
     request.files['audio'].save(f"./resources/audio/{nome}.wav")
     sexo = request.form['sexo']
     idade = request.form['idade']
     nivel = request.form['nivel_falta_de_ar']
+       
+    logger.info((f"audio = {request.files['audio']} {type(request.files['audio'])} | sexo = {sexo} | idade = {idade} | nivel = {nivel}"))
     
     with open('./resources/datasets/input.csv','w') as file:
         writer = csv.writer(file)
