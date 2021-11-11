@@ -1,20 +1,18 @@
-from flask.sessions import NullSession
 import torch
 import os
-import logging
-
 from flask import Flask, request
 from waitress import serve
 from flask.json import jsonify
 from utils.generic_utils import load_config
 from utils.audio_processor import AudioProcessor 
 from utils.dataset import inf_dataloader, test_dataloader
+from utils.custom_logger import getCustomLogger
 from models.spiraconv import SpiraConvV2
 from datetime import datetime
 import csv
 
-logger = logging.getLogger("waitress")
-logger.setLevel(logging.INFO)
+
+logger = getCustomLogger("waitress")
 
 config = load_config("config/spira.json")
 audio_processor = AudioProcessor(**config.audio)
@@ -72,6 +70,8 @@ def predict():
 
         result = output[0].item()
 
+        logger.info((f"{round(result, 3)}"))
+        
         return jsonify({'resultado': f"{round(result, 3)}"})
 
 if __name__ == '__main__':

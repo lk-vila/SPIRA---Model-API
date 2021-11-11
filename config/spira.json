@@ -34,7 +34,7 @@
     
     "test_config": {
         "batch_size": 10,
-        "num_workers": 10 //Changed due to system limitations. Rollback for deploy
+        "num_workers": 8 //Changed due to system limitations. Rollback for deploy
     },
 
     "audio": {
