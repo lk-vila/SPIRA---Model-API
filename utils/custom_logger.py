@@ -1,4 +1,5 @@
 import logging
+import os
 
 class CustomFormatter(logging.Formatter):
 
@@ -27,13 +28,29 @@ class CustomFormatter(logging.Formatter):
 
 def getCustomLogger(name = "root"):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
     logger.propagate = False
     
     ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
     ch.setFormatter(CustomFormatter())
     
     logger.addHandler(ch)
     
+    level = os.getenv("LOGGING_LEVEL")
+    if level == "DEBUG":
+        logger.setLevel(logging.DEBUG)
+        ch.setLevel(logging.DEBUG)
+    elif level == "INFO":
+        logger.setLevel(logging.INFO)
+        ch.setLevel(logging.INFO)
+    elif level == "WARNING":
+        logger.setLevel(logging.WARNING)
+        ch.setLevel(logging.WARNING)
+    elif level == "ERROR":
+        logger.setLevel(logging.ERROR)
+        ch.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.CRITICAL)
+        ch.setLevel(logging.CRITICAL)
+
+
     return logger
