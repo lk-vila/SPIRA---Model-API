@@ -27,7 +27,6 @@ app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    print(os.getenv("PORT"))
     logger.info("Incoming prediction request")
     logger.debug([f"{i}: {request.form[i]}" for i in request.form.keys()])
     logger.debug([f"{i}: {request.files[i]}" for i in request.files.keys()])
