@@ -6,7 +6,7 @@
         "window_len": 4,
         "step": 1,
         "padding_with_max_lenght": false,
-        "max_seq_len": null,
+        "max_seq_len": 401,
         "eval_csv": "../SPIRA_Dataset_V2/metadata_eval.csv",
         "eval_data_root_path": "../SPIRA_Dataset_V2/",
         "test_csv": "../SPIRA_Dataset_V2/metadata_test.csv",

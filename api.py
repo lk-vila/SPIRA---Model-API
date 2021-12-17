@@ -30,7 +30,7 @@ def predict():
     logger.info("Incoming prediction request")
     logger.debug([f"{i}: {request.form[i]}" for i in request.form.keys()])
     logger.debug([f"{i}: {request.files[i]}" for i in request.files.keys()])
-    nome = datetime.now()
+    nome = datetime.utcnow()
     request.files['audio'].save(f"./resources/audio/{nome}.wav")
 
     try:
@@ -48,19 +48,21 @@ def predict():
     except:
         nivel = "unknown"
        
-    logger.info((f"audio = {request.files['audio']} {type(request.files['audio'])} | sexo = {sexo} | idade = {idade} | nivel = {nivel}"))
+    logger.debug((f"audio = {request.files['audio']} {type(request.files['audio'])} | sexo = {sexo} | idade = {idade} | nivel = {nivel}"))
     
     with open('./resources/datasets/input.csv','w') as file:
         writer = csv.writer(file)
         writer.writerow(['file_path', 'class', 'sexo', 'idade', 'nivel_falta_de_ar'])
-        writer.writerow([f'../audio/{nome}.wav', '0', sexo, idade, nivel])
+        for i in range(2):
+            writer.writerow([f'../audio/{nome}.wav', '0', sexo, idade, nivel])
 
     dataloader = inf_dataloader(config, audio_processor, max_seq_len=max_seq_len)
     with torch.inference_mode():
         for feature, target, slices, targets_org in dataloader:
             # unpack overlapping for calculation loss and accuracy 
             output = model(feature).float()
-
+            logger.debug(f"output: {output}")
+        
             if slices is not None and targets_org is not None:
                 idx = 0
                 new_output = []
@@ -70,6 +72,8 @@ def predict():
 
                     samples_output = output[idx:idx+num_samples]
                     output_mean = samples_output.mean()
+                    logger.debug(f"samples_output: {samples_output}")
+                    logger.debug(f"output_mean: {output_mean}")
                     samples_target = target[idx:idx+num_samples]
                     target_mean = samples_target.mean()
 
@@ -79,11 +83,11 @@ def predict():
 
                 target = torch.stack(new_target, dim=0)
                 output = torch.stack(new_output, dim=0)
-
+                
         os.remove(f"./resources/audio/{nome}.wav")
 
-
-        result = output[0].item()
+        logger.debug(f"output: {output}")
+        result = output.float().sum().item() / len(dataloader.dataset)
 
         logger.info((f"{round(result, 3)}"))
         
