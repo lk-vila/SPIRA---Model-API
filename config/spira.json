@@ -25,7 +25,7 @@
     },
 
     "data_aumentation": {
-        "insert_noise": true,
+        "insert_noise": false,
         "num_noise_control": 2,
         "num_noise_patient": 2,
         "noise_max_amp": 0.19233719,

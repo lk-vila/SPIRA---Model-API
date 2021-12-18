@@ -53,8 +53,7 @@ def predict():
     with open('./resources/datasets/input.csv','w') as file:
         writer = csv.writer(file)
         writer.writerow(['file_path', 'class', 'sexo', 'idade', 'nivel_falta_de_ar'])
-        for i in range(2):
-            writer.writerow([f'../audio/{nome}.wav', '0', sexo, idade, nivel])
+        writer.writerow([f'../audio/{nome}.wav', '0', sexo, idade, nivel])
 
     dataloader = inf_dataloader(config, audio_processor, max_seq_len=max_seq_len)
     with torch.inference_mode():
