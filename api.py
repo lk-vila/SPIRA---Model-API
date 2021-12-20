@@ -1,17 +1,18 @@
-from flask.sessions import NullSession
 import torch
 import os
-
 from flask import Flask, request
 from waitress import serve
 from flask.json import jsonify
 from utils.generic_utils import load_config
 from utils.audio_processor import AudioProcessor 
 from utils.dataset import inf_dataloader, test_dataloader
+from utils.custom_logger import getCustomLogger
 from models.spiraconv import SpiraConvV2
 from datetime import datetime
 import csv
 
+
+logger = getCustomLogger("waitress")
 
 config = load_config("config/spira.json")
 audio_processor = AudioProcessor(**config.audio)
@@ -26,11 +27,28 @@ app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    nome = datetime.now()
+    logger.info("Incoming prediction request")
+    logger.debug([f"{i}: {request.form[i]}" for i in request.form.keys()])
+    logger.debug([f"{i}: {request.files[i]}" for i in request.files.keys()])
+    nome = datetime.utcnow()
     request.files['audio'].save(f"./resources/audio/{nome}.wav")
-    sexo = request.form['sexo']
-    idade = request.form['idade']
-    nivel = request.form['nivel_falta_de_ar']
+
+    try:
+        sexo = request.form['sexo']
+    except:
+        sexo = "unknown"
+
+    try:
+        idade = request.form['idade']
+    except:
+        idade = "unknown"
+
+    try:
+        nivel = request.form['nivel_falta_de_ar']
+    except:
+        nivel = "unknown"
+       
+    logger.debug((f"audio = {request.files['audio']} {type(request.files['audio'])} | sexo = {sexo} | idade = {idade} | nivel = {nivel}"))
     
     with open('./resources/datasets/input.csv','w') as file:
         writer = csv.writer(file)
@@ -42,7 +60,8 @@ def predict():
         for feature, target, slices, targets_org in dataloader:
             # unpack overlapping for calculation loss and accuracy 
             output = model(feature).float()
-
+            logger.debug(f"output: {output}")
+        
             if slices is not None and targets_org is not None:
                 idx = 0
                 new_output = []
@@ -52,6 +71,8 @@ def predict():
 
                     samples_output = output[idx:idx+num_samples]
                     output_mean = samples_output.mean()
+                    logger.debug(f"samples_output: {samples_output}")
+                    logger.debug(f"output_mean: {output_mean}")
                     samples_target = target[idx:idx+num_samples]
                     target_mean = samples_target.mean()
 
@@ -61,12 +82,14 @@ def predict():
 
                 target = torch.stack(new_target, dim=0)
                 output = torch.stack(new_output, dim=0)
-
+                
         os.remove(f"./resources/audio/{nome}.wav")
 
+        logger.debug(f"output: {output}")
+        result = output.float().sum().item() / len(dataloader.dataset)
 
-        result = output[0].item()
-
+        logger.info((f"{round(result, 3)}"))
+        
         return jsonify({'resultado': f"{round(result, 3)}"})
 
 if __name__ == '__main__':

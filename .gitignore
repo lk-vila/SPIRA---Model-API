@@ -1,6 +1,7 @@
 __pycache__
 *.wav
 *.csv
+env
 venv
 Ruidos-Hospitalares
 checkpoints

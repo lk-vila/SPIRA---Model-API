@@ -79,7 +79,7 @@ class Dataset(Dataset):
 
         elif self.c.dataset['split_wav_using_overlapping']:
             # set max len for window_len seconds multiply by sample_rate and divide by hop_lenght
-            self.max_seq_len = int(((self.c.dataset['window_len']*self.ap.sample_rate)/c.audio['hop_length'])+1)
+            self.max_seq_len = self.c.dataset['max_seq_len'] #int(((self.c.dataset['window_len']*self.ap.sample_rate)/c.audio['hop_length'])+1)
             print("The Max Time dim Lenght is: ", self.max_seq_len, "It's use overlapping technique, window:", self.c.dataset['window_len'], "step:", self.c.dataset['step'])
         else: # for eval set max_seq_len in train mode
             if self.c.dataset['max_seq_len']:
@@ -94,7 +94,7 @@ class Dataset(Dataset):
         wav = self.ap.load_wav(os.path.join(self.dataset_root, self.dataset_list[idx][0]))
         #print("FILE:", os.path.join(self.dataset_root, self.dataset_list[idx][0]), wav.shape)
         class_name = self.dataset_list[idx][1]
-
+        
         # its assume that noise file is biggest than wav file !!
         if self.c.data_aumentation['insert_noise']:
             # Experiments do different things within the dataloader. So depending on the experiment we will have a different random state here in get item. To reproduce the tests always using the same noise we need to set the seed again, ensuring that all experiments see the same noise in the test !!
